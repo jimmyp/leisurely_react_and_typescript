@@ -12,7 +12,7 @@ export const strs: string[] = ["1"];
 export const strs1: Array<string> = ["1"];
 
 export const maybeNumber: number | undefined | null = undefined;
-export const empty: {} = {};
+export const empty: {} = { field: 'value'};
 
 
 
@@ -62,8 +62,7 @@ interface Active { activity: Activity };
 
 export const pet: EatAndSing & Active = { 'voice': 'meuw', 'food': [ 'apple' ], 'activity': 'belly rub' };
 
-//TODO: Why is K 'voice & 'voice'
-export const pureSinger: Pick<EatAndSing, 'voice' & 'voice'> = { 'voice': 'meuw' };
+export const pureSinger: Pick<EatAndSing, 'voice' | 'food'> = { 'voice': 'meuw', 'food' : ['apple'] };
 
 type Eater = { food: Exclude<Food, 'mango'>, name: string };
 
@@ -80,8 +79,6 @@ type Piglet = { activity: Exclude<Food, 'walk'>, food: Food[] };
 
 
 
-
-//TODO: haven't done this one yet
 //====== madness==========
 type Swap<T> = T extends string ? number : string;
 
@@ -90,10 +87,10 @@ let x : Swap<string> = 1;
 // define this function
 // type guards // unknown types
 // first, replace return type 
-export function swap<T extends string | number>(son: T): any {
+export function swap<T extends string | number>(son: T): Swap<T> {
     switch (typeof son) {
-        // case 'string': return Number(son);
-        // default: return String(son);
+        case 'string': return Number(son) as Swap<T>;
+        default: return String(son) as Swap<T>;
     }
 }
 

@@ -1,28 +1,71 @@
-import React, { useState } from 'react';
+import React, { SetStateAction, useState } from 'react';
 import './App.css';
 
-const Image = (props: {rotation: number}) =>
-  <img
-    alt="mi imagia"
-    src="https://pixabay.com/get/g1749546ed8da4018ceb48a5292b1d2607f9af1cb045c7bf6ecd9e57074795b166dd33f7d64845b8c30f00e66049bd7bc1f50d739420c29542edb16aeb55ce587_640.jpg"
-    style={{transform: `rotate(${props.rotation}deg)`}}
-  />
+type State = {
+  imageIndexOffset: number
+  imagesWithRotations: { url: string, rotation: number}[]
+}
 
-const Controls = (props: { onCounterClockwiseClick: () => void, onClockwiseClick: () => void }) =>
+function Image(props: {state: State}){
+  const currentImage = props.state.imagesWithRotations[getCurrentImageIndex(props.state)];
+  return <img
+    alt="mi imagia"
+    src={currentImage.url}
+    style={{transform: `rotate(${currentImage.rotation}deg)`}}
+  />
+}
+
+function getCurrentImageIndex(state: State): number
+{
+  return state.imageIndexOffset % state.imagesWithRotations.length;
+}
+
+function rotateCurrentImage(rotationDelta: number, prev: State): State
+{
+  const currentImageIndex = getCurrentImageIndex(prev);
+
+  //TODO: this code still has a bug in it
+  const newImages = [
+    ...prev.imagesWithRotations.slice(0, currentImageIndex),
+    { url: prev.imagesWithRotations[currentImageIndex].url, rotation: prev.imagesWithRotations[currentImageIndex].rotation + rotationDelta},
+    ...prev.imagesWithRotations.slice(currentImageIndex + 1, prev.imagesWithRotations.length - currentImageIndex)
+  ];
+
+  return {
+    ...prev,
+    imagesWithRotations: newImages
+  }
+}
+
+const Controls = (props: { 
+  setState: React.Dispatch<SetStateAction<State>>, 
+}) =>
     <div>
-      <button onClick={props.onCounterClockwiseClick}>Left</button>
-      <button onClick={props.onClockwiseClick}>Right</button>
+      <button onClick={() => props.setState(prev => rotateCurrentImage(-45, prev))}>CCW</button>
+      <button onClick={() => props.setState(prev => ({
+      ...prev,
+      imageIndexOffset: prev.imageIndexOffset++
+      }))}>Next Image</button>
+      <button onClick={() => props.setState(prev =>  rotateCurrentImage(45, prev))}>CW</button>
     </div>
 
 function App() {
-  const [rotation, setRotation] = useState(0);
-  console.log("TODO: How does useState know which state to return?");
+  //TODO: as a stretch try to use context
+  const [state, setState] = useState({
+    imageIndexOffset: 0,
+    imagesWithRotations: [
+      { url: "https://pixabay.com/get/gc6d3b8f771160bcde6f8ce201c637b07baa5f201659fe2b77ac44df7c7205d4103921d4caa547e86d83ad63c9cea30829bff95d87086cc5b653791963d073d74_1280.jpg", rotation: 0}, 
+      { url: "https://pixabay.com/get/gf29e2dbbd069c013aec5118aa8c344cdb4d5b7b5f88b7e0817589ea0074c0c6cfc9da90fe7fbd903194a5d3e4efa993af054ff2de04456518619e93053ec5fa8_1280.jpg", rotation: 0},
+      { url: "https://pixabay.com/get/gdc59d1c756b578da89b6926d009576b1a4ea16c31e2c2eb08b3b9d9c8a78c0f542e39e9089d9e3f370353148149f57a3107a5a3a24797d95acae81cda72f7bab_1280.jpg", rotation: 0},
+      { url: "https://pixabay.com/get/gc552e60c1a347ff3dc0f80a13c6fe273ff9097ede5c9df301d12d0e75cf9f8fba161dbc9c5286e14ae780b5cc09bc3fb8a3ae2e925f76e1165bceac8514921a9_1280.jpg", rotation: 0}
+    ]
+  });
+
   return (
     <div>
-      <Image rotation={rotation} />
+      <Image state={state} />
       <Controls 
-        onCounterClockwiseClick={() => setRotation(rotation-45)}
-        onClockwiseClick={() => setRotation(rotation+45)}
+        setState={setState}
       />
     </div>
   );
