@@ -24,12 +24,12 @@ function rotateCurrentImage(rotationDelta: number, prev: State): State
 {
   const currentImageIndex = getCurrentImageIndex(prev);
 
-  //TODO: this code still has a bug in it
-  const newImages = [
-    ...prev.imagesWithRotations.slice(0, currentImageIndex),
-    { url: prev.imagesWithRotations[currentImageIndex].url, rotation: prev.imagesWithRotations[currentImageIndex].rotation + rotationDelta},
-    ...prev.imagesWithRotations.slice(currentImageIndex + 1, prev.imagesWithRotations.length - currentImageIndex)
-  ];
+  const newImages =
+    prev.imagesWithRotations.map((img, index) => 
+      index === currentImageIndex 
+        ?  { url: prev.imagesWithRotations[currentImageIndex].url, rotation: prev.imagesWithRotations[currentImageIndex].rotation + rotationDelta}
+        : img
+    );
 
   return {
     ...prev,

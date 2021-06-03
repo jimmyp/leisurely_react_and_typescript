@@ -1,24 +1,18 @@
-enum EventTypes {
-    'EAT',
-    'SLEEP',
-    'WORK'
-}
-
 type Eat = {
     food: string
-    type: EventTypes.EAT
+    type: 'EAT'
 }
 
 type Sleep = {
     dream: string
     duration: number
-    type: EventTypes.SLEEP
+    type: 'SLEEP'
 }
 
 type Work = {
     profession: string
     slack: string
-    type: EventTypes.WORK
+    type: 'WORK'
 }
 
 type Play = {
@@ -34,14 +28,14 @@ function assertUnreachable(x: never): never {
 //TODO: Couldn't get exhaustive pattern matching working?
 function handleEvent(event: Events) {
     switch (event.type) {
-        case EventTypes.EAT: return `Enjoy your ${event.food}`;
-        case EventTypes.SLEEP: return `You will dream about ${event.dream} for ${event.duration} hours`;
-        case EventTypes.WORK: return `A job in ${event} is tough but you can always ${event.slack}!`;
-        default: throw new Error("Didn't expect to get here");
+        case 'EAT': return `Enjoy your ${event.food}`;
+        case 'SLEEP': return `You will dream about ${event.dream} for ${event.duration} hours`;
+        case 'WORK': return `A job in ${event} is tough but you can always ${event.slack}!`;
+        default: assertUnreachable(event.type)
     }
 }
-console.log(handleEvent({ type: EventTypes.EAT, food: 'Pizza' }));
-console.log(handleEvent({ type: EventTypes.SLEEP, dream: 'Surfing', duration: 10 }));
-console.log(handleEvent({ type: EventTypes.WORK, profession: 'software', slack: `play games` }));
+console.log(handleEvent({ type: 'EAT', food: 'Pizza' }));
+console.log(handleEvent({ type: 'SLEEP', dream: 'Surfing', duration: 10 }));
+console.log(handleEvent({ type: 'WORK', profession: 'software', slack: `play games` }));
 
 export default {}
