@@ -1,5 +1,3 @@
-//TODO: I'm not sure I understood these
-
 const chris = {
     name: 'Chris',
     age: 21,
@@ -35,24 +33,35 @@ type FaveFood = typeof chris.favourites.food[0];
 
 describe('Immutability quiz!', () => {
     it('birthday', () => {
-        const chrisOlders: Person = chris;
+        const chrisOlder: Person = {
+            ...chris, 
+            age: chris.age + 1
+        };
 
         // value must change
-        expect(chrisOlders.age).toEqual(chris.age);
+        expect(chrisOlder.age).not.toEqual(chris.age);
 
-        // reference also change
-        expect(chrisOlders !== chris).not.toEqual(true);
+        // reference must also change
+        expect(chrisOlder !== chris).toEqual(true);
     });
 
     it('Capital must be corrected', () => {
-        const withCorrectCapital: Person = chris;
-        withCorrectCapital.address.country.capital = 'Aukland';
+        const withCorrectCapital: Person = {
+            ...chris,
+            address: {
+                ...chris.address,
+                country: {
+                    ...chris.address.country,
+                    capital: 'Wellington'
+                }
+            }
+        };
 
         // value must change
         expect(withCorrectCapital.address.country.capital).not.toEqual('Auckland');
 
         // reference also change
-        expect(withCorrectCapital !==  chris).toEqual(false);
+        expect(withCorrectCapital !== chris).toEqual(true);
     });
 
     it('Swap sushi for bao bun', () => {
@@ -72,14 +81,19 @@ describe('Immutability quiz!', () => {
             }
         ];
 
-        const withCorrectCapital: Person = chris;
-        withCorrectCapital.favourites.food = expectedFavourites;
+        const newFavouriteFoods: Person = {
+            ...chris,
+            favourites: {
+                ...chris.favourites,
+                food: [...chris.favourites.food.filter(f => f.name !== 'sushi'), baoBun]
+            }
+        };
 
         // value must change
-        expect(withCorrectCapital.favourites.food).toEqual(expectedFavourites);
+        expect(newFavouriteFoods.favourites.food).toEqual(expectedFavourites);
 
         // reference also change
-        expect(withCorrectCapital !== chris).toEqual(false);
+        expect(newFavouriteFoods !== chris).toEqual(true);
     });    
 });
 
