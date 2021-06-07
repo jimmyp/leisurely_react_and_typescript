@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { State, selectCurrentImageIndex, RotatedImage } from './store'
+import { State, selectCurrentImage, RotatedImage } from './store'
 
 type FrameProps = { rotatedImage: RotatedImage };
 
@@ -13,7 +13,7 @@ function Frame(props: FrameProps){
 
 
 const mapStateToProps = (state: State): FrameProps => ({
-    rotatedImage: state.imagesWithRotations[selectCurrentImageIndex(state)]
+    rotatedImage:  selectCurrentImage(state)
 })
 export default connect(
     mapStateToProps

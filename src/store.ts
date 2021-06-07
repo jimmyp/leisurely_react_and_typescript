@@ -1,4 +1,6 @@
+import { stat } from "fs"
 import { createStore } from "redux"
+import { composeWithDevTools } from "redux-devtools-extension"
 
 export type RotatedImage = { url: string, rotation: number}
 
@@ -33,7 +35,7 @@ function imagesReducer(state: State = {
             ...state, 
             imagesWithRotations: state.imagesWithRotations.map((img, index) => 
             index === selectCurrentImageIndex(state) 
-                ?  { url: state.imagesWithRotations[selectCurrentImageIndex(state) ].url, rotation: state.imagesWithRotations[selectCurrentImageIndex(state) ].rotation + action.rotationDelta}
+                ?  { url: selectCurrentImage(state).url, rotation: selectCurrentImage(state).rotation + action.rotationDelta}
                 : img)
         }
         default:
@@ -41,9 +43,14 @@ function imagesReducer(state: State = {
     }   
 }
 
-export function selectCurrentImageIndex(state: State): number
+function selectCurrentImageIndex(state: State): number
 {
   return state.imageIndexOffset % state.imagesWithRotations.length;
 }
+
+export function selectCurrentImage(state: State): RotatedImage
+{
+  return state.imagesWithRotations[selectCurrentImageIndex(state)]
+}
   
-export const store = createStore(imagesReducer);
+export const store = createStore(imagesReducer, composeWithDevTools());
